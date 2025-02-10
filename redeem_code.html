@@ -1,0 +1,65 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<style>
+    #loader { display: none; }
+    .header { justify-content: center; }
+    .card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952; align-items: center; justify-content: center;}
+</style>
+<div class="header">
+    <h2>Redeem Codes</h2>
+</div>
+    <div id="redeem-list"></div>
+    <div id="loader"><div class="loader"></div></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", fetchRedeemData);
+        
+        function fetchRedeemData() {
+            fetch("https://script.google.com/macros/s/AKfycbzN9U-xPqHCex6JoIwalp6tqgczxVQvFAXwMTk2ICSvBBVJK_utCqHr8SXrpXw1QvMH/exec")
+                .then(response => response.json())
+                .then(data => {
+                    let redeemList = document.getElementById("redeem-list");
+                    redeemList.innerHTML = "";
+                    
+                    data.forEach(item => {
+                        let card = document.createElement("div");
+                        card.className = "card";
+                        card.textContent = `${item.name} - ${item.amount} Coins`;
+                        card.style.cursor = "pointer";
+                        card.onclick = () => confirmWithdraw(item.name, item.amount);
+                        redeemList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error("Error fetching redeem data:", error));
+        }
+
+        function confirmWithdraw(name, amount) {
+            let confirmation = confirm("Do you want to withdraw " + amount + " coins?");
+            if (confirmation) {
+                let username = localStorage.getItem("asg_local");
+                if (!username) {
+                    alert("User not logged in.");
+                    return;
+                }
+                document.getElementById("loader").style.display = "flex";
+                
+                fetch("https://script.google.com/macros/s/AKfycbzN9U-xPqHCex6JoIwalp6tqgczxVQvFAXwMTk2ICSvBBVJK_utCqHr8SXrpXw1QvMH/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `username=${encodeURIComponent(username)}&amount=${encodeURIComponent(amount)}`
+                })
+                .then(response => response.text())
+                .then(message => {
+                    document.getElementById("loader").style.display = "none";
+                    alert(message);
+                    location.reload();
+                })
+                .catch(error => {
+                    document.getElementById("loader").style.display = "none";
+                    console.error("Error processing withdrawal:", error);
+                });
+            }
+        }
+    </script>
