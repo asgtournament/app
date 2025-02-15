@@ -14,16 +14,21 @@
     .parts > a { display: flex; align-items: center; flex-direction: column; gap: 5px; background: #cecece; width: 100px; height: 100px; justify-content: space-evenly; border-radius: 12px;}
     .footer { padding: 10px; position: fixed; bottom: 0; display: flex; align-items: center; justify-content: space-around; width: 100%; background: #022953;}
     .footer > a { font-size: 22px; color: #fff;}
-    .more { border: 1px solid; padding: 6px; border-radius: 50%;}
+    .more {padding: 6px;}
     .parts > a > p { color: #000;}
     .parts > a > i { color: #fff; padding: 10px; border-radius: 125px; background: linear-gradient(45deg, #0000ff, #008000); font-size: 25px; display: flex;
     align-items: center; justify-content: center; width: 30px; height: 30px; }
     .name { display: flex; flex-direction: column; align-items: center; justify-content: center;}
     .name > h3 { font-weight: 700; font-size: 17px;}
-    #modesContainer { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-evenly; align-items: center; flex: 1 0 calc(50% - 10px); box-sizing: border-box;}
+    #modesContainer { padding: 0 0 20% 0; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-evenly; align-items: center; flex: 1 0 calc(50% - 10px); box-sizing: border-box;}
     .mode-item { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 40%; background: #002d35; border-radius: 8px; padding: 0px 0px 10px 0px; }
     .mode-item > img { width: 100%; height: 120px; border-radius: 12px 12px 0px 0px;}
     .whatsapp { background: #008000; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; position: fixed; right: 5%; bottom: 10%; color: #fff; font-size: 20px; border-radius: 125px;}
+    .image-container { display: flex; align-items: center; justify-content: center; }
+    #currentImage { max-width: 300px; border-radius: 12px;}
+    .dots-container { text-align: center; margin-top: 10px; }
+    .dot { height: 10px; width: 10px; margin: 0 5px; background-color: transparent; border: 1px solid #eee; border-radius: 50%; display: inline-block; cursor: pointer; }
+    .dot.active { background-color: #eee; }
 </style>
 <div class="header">
     <img src="https://i.ibb.co/d4m5VZ3h/icon.jpg">
@@ -36,6 +41,12 @@
 <div class="noti">
     <img src="https://i.ibb.co/fGFV6vzD/horn.png">
     <h2>Join & Earn Now!</h2>
+</div>
+<div class="slider-container">
+    <div class="image-container">
+        <img id="currentImage" src="">
+    </div>
+    <div class="dots-container" id="dotsContainer"></div>
 </div>
 <div class="customer-text"><h3>My Matches</h3><hr></div>
 <div class="parts">
@@ -55,9 +66,10 @@
 <div class="customer-text"><h3>Esports Games</h3><hr></div>
 <div id="modesContainer"></div>
 <div class="footer">
+    <a href="withdraw.html"><i class="fa-solid fa-money-check-dollar"></i></a>
     <a href="earn.html"><i class="fa-solid fa-gift"></i></a>
     <a onclick="reload()"><i class="fa-solid fa-house"></i></a>
-    <a href="more.html" class="more"><i class="fa-solid fa-ellipsis"></i></a>
+    <a href="more.html" class="more"><i class="fa-solid fa-user"></i></a>
 </div>
 <div id="loader"><div class="loader"></div></div>
 <script>
@@ -123,3 +135,4 @@
         location.reload();
     }
 </script>
+<script src="slider.js"></script>
