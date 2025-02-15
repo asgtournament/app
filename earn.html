@@ -9,8 +9,8 @@
     .loader { display: none; }
     .app-card > img { width: 50px; height: 50px; border-radius: 12px;}
     .header { justify-content: center;}
-    .app-card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952;}
-    .copy-btn { background: transparent; border: none; font-size: 20px;}
+    .app-card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952; align-items: center;}
+    .copy-btn , .info-btn { background: transparent; border: none; font-size: 20px;}
     .make { text-align: center; background: #024f55; padding: 6px;}
     a { display: flex; position: fixed; background: #008000; width: 50px; height: 50px; bottom: 20px; right: 20px; align-items: center; justify-content: center; color: #ffffff; border-radius: 125px; font-size: 26px; }
     a > i { display: flex; align-items: center; justify-self: center; }
@@ -32,7 +32,7 @@
     $(document).ready(function() {
         $(".loader").show();
         
-        fetch("https://script.google.com/macros/s/AKfycbx1v5T4MWrVu3RA6t0zRj9IdXJh76JdEG3bFkfhZKnKIf8Bt1c5bfwsXPM2mJbiDfPHpg/exec")
+        fetch("https://script.google.com/macros/s/AKfycbwBZnMtPwBzZ1LN0-CXSu_c3TfpmDN4NQ2mZH9Hv1wqhJRAbSJsbT_tgQkFVrmE3qotKA/exec")
         .then(response => response.json())
         .then(data => {
             $(".loader").hide();
@@ -41,7 +41,7 @@
                 return;
             }
 
-            data.forEach(app => {
+            data.forEach((app, index) => {
                 $("#appList").append(`
                     <div class="app-card" onclick="window.location.href='${app.url}'">
                         <img class="app-image" src="${app.image}" alt="App">
@@ -50,6 +50,11 @@
                             <div class="referral">
                                 <span>${app.referral}</span>
                                 <button class="copy-btn" onclick="copyText(event, '${app.referral}')">📋</button>
+                                <button class="info-btn" onclick="toggleInfo(event, ${index})">ℹ️</button>
+                                <p>Coins: <b>${app.columnE}</b></p>
+                            </div>
+                            <div id="info-${index}" class="info-content" style="display: none;">
+                                <p><b>Task:</b> ${app.columnF}</p>
                             </div>
                         </div>
                     </div>
@@ -67,5 +72,11 @@
         navigator.clipboard.writeText(text).then(() => {
             alert("Referral code copied!");
         });
+    }
+
+    function toggleInfo(event, index) {
+        event.stopPropagation();
+        let infoDiv = document.getElementById(`info-${index}`);
+        infoDiv.style.display = infoDiv.style.display === "none" ? "block" : "none";
     }
 </script>
