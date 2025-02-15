@@ -12,7 +12,10 @@
     .body p { text-align: center; margin: 15px 0px 0px 0px; }
     .form { height: 80vh;}
     .copy { border: none; background: transparent; font-size: 30px;}
-    #referralCode { background: #07284b; border: none; color: #fff;}
+    #referralCode { background: #07284b; border: none; color: #fff; border-radius: 125px;}
+    .form { height: auto;}
+    .refer { text-align: left; margin: 10px 20px;}
+    .refer > a { display: flex; align-items: center; justify-content: center; width: 55%; padding: 8px; text-transform: uppercase; color: #FFF; background: #07284b; border: 1px solid rgb(158, 54, 54); border-radius: 125px;}
 </style>
 <div class="form">
 <div class="form-group">
@@ -24,6 +27,9 @@
     <input type="text" id="referralCode" readonly>
     <button onclick="copyCode()" class="copy">📋</button>
 </div>
+</div>
+<div class="refer">
+    <a href="">Refer & Earn</a>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
