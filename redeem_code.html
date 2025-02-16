@@ -1,16 +1,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://kit.fontawesome.com/8aa17a250d.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="loader.css">
 <style>
     #loader { display: none; }
     .header { justify-content: center; }
-    .card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952; align-items: center; justify-content: center; }
+    .card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 15px; background: #022952; align-items: center; justify-content: space-around; }
     .alert-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; background: #022952; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); text-align: center; }
     .alert-buttons { margin-top: 10px; display: flex; justify-content: space-around; }
     .alert-button { padding: 5px 10px; cursor: pointer; border: none; border-radius: 5px; }
     .alert-confirm { background: green; color: white; border: none; }
     .alert-cancel { background: red; color: white; border: none; }
+    .card > img { width: 30px; }
+    .name { font-size: 20px; }
+    .coin { display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 125px; width: 50px; font-size: 20px; background: #9f9f1c; gap: 5px; color: #101414;}
 </style>
 
 <div class="header">
@@ -35,16 +39,13 @@
             .then(response => response.json())
             .then(data => {
                 let redeemList = document.getElementById("redeem-list");
-                redeemList.innerHTML = "";
-
-                data.forEach(item => {
-                    let card = document.createElement("div");
-                    card.className = "card";
-                    card.textContent = `${item.name} - ${item.amount} Coins`;
-                    card.style.cursor = "pointer";
-                    card.onclick = () => confirmWithdraw(item.name, item.amount);
-                    redeemList.appendChild(card);
-                });
+                redeemList.innerHTML = data.map(item => `
+                    <div class="card" style="cursor: pointer;" onclick="confirmWithdraw('${item.name}', ${item.amount})">
+                        <img src="https://genovastogo.com/wp-content/uploads/2023/09/google-play-store-icon-logo-symbol.png" style="display: block;">
+                        <p class="name">${item.name}</p>
+                        <p class="coin"><i class="fa-solid fa-coins"></i><span>${item.amount}</span></p>
+                    </div>
+                `).join("");
             })
             .catch(error => console.error("Error fetching redeem data:", error));
     }
@@ -55,10 +56,10 @@
             showAlert("User not logged in.", false);
             return;
         }
-        
+
         showAlert(`Do you want to withdraw ${amount} coins?`, true, () => {
             document.getElementById("loader").style.display = "flex";
-            
+
             fetch("https://script.google.com/macros/s/AKfycbwtNdU0Ax5x2rWE-YoWNfSKwCyJPiLqFINnhLjrbOPyf-ycmqbFcJhShHzrS0lFGJ8C/exec", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
