@@ -5,15 +5,21 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://kit.fontawesome.com/8aa17a250d.js" crossorigin="anonymous"></script>
 <style>
-    #loader { width: 100%; justify-content: center; align-items: center; display: flex;}
-    .loader { display: none; }
-    .app-card > img { width: 50px; height: 50px; border-radius: 12px;}
-    .header { justify-content: center;}
-    .app-card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952; align-items: center;}
-    .copy-btn , .info-btn { background: transparent; border: none; font-size: 20px;}
-    .make { text-align: center; background: #024f55; padding: 6px;}
-    a { display: flex; position: fixed; background: #008000; width: 50px; height: 50px; bottom: 20px; right: 20px; align-items: center; justify-content: center; color: #ffffff; border-radius: 125px; font-size: 26px; }
+    #loader { width: 100%; justify-content: center; align-items: center; display: flex; } 
+    .loader { display: none; } 
+    .container { display: flex; flex-direction: column; gap: 10px; padding: 20px; } 
+    .app-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; border-radius: 12px; background: #022952; overflow: hidden; width: 100%; } 
+    .app-card > img { width: 100%; height: 150px; object-fit: cover; } 
+    .header { justify-content: center; text-align: center; } 
+    .copy-btn, .info-btn { background: transparent; border: none; font-size: 20px; } 
+    .make { text-align: center; background: #024f55; padding: 6px; } 
+    a { display: flex; position: fixed; background: #008000; width: 50px; height: 50px; bottom: 20px; right: 20px; align-items: center; justify-content: center; color: #ffffff; border-radius: 125px; font-size: 26px; } 
     a > i { display: flex; align-items: center; justify-self: center; }
+    .app-info { text-align: left; margin: 10px;}
+    .title { text-align: center; font-size: 24px; font-weight: 500;}
+    .coins { font-size: 20px; text-transform: uppercase; }
+    .task { margin: 10px 0px; font-size: 18px;}
+    strong { font-weight: 500;}
 </style>
 <div class="header">
     <h2>App List</h2>
@@ -24,14 +30,12 @@
 <div class="container">
     <div id="appList"></div>
 </div>
-<a href="https://wa.me/918653407932"><i class="fa-brands fa-whatsapp"></i></a>
 <div id="loader">
     <div class="loader"></div>
 </div>
 <script>
     $(document).ready(function() {
         $(".loader").show();
-        
         fetch("https://script.google.com/macros/s/AKfycbwBZnMtPwBzZ1LN0-CXSu_c3TfpmDN4NQ2mZH9Hv1wqhJRAbSJsbT_tgQkFVrmE3qotKA/exec")
         .then(response => response.json())
         .then(data => {
@@ -40,21 +44,19 @@
                 $("#appList").html("<p>No apps available.</p>");
                 return;
             }
-
             data.forEach((app, index) => {
                 $("#appList").append(`
                     <div class="app-card" onclick="window.location.href='${app.url}'">
                         <img class="app-image" src="${app.image}" alt="App">
                         <div class="app-info">
-                            <p><strong>${app.name}</strong></p>
+                            <p class="title">${app.name}</p>
                             <div class="referral">
-                                <span>${app.referral}</span>
-                                <button class="copy-btn" onclick="copyText(event, '${app.referral}')">📋</button>
-                                <button class="info-btn" onclick="toggleInfo(event, ${index})">ℹ️</button>
-                                <p>Coins: <b>${app.columnE}</b></p>
-                            </div>
-                            <div id="info-${index}" class="info-content" style="display: none;">
-                                <p><b>Task:</b> ${app.columnF}</p>
+                                <span style="display: none;">${app.referral}</span>
+                                <button class="copy-btn" style="display: none;" onclick="copyText(event, '${app.referral}')">📋</button>
+                                <p class="coins">Coins <b>${app.columnE}</b></p>
+                                <div id="info-${index}" class="info-content">
+                                    <p class="task"><b>Task:</b> ${app.columnF}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
