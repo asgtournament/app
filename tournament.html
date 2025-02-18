@@ -74,7 +74,7 @@
     function displayTournaments() {
         const container = document.getElementById('tournamentList');
         container.innerHTML = '';
-        const userName = localStorage.getItem('tour_local');
+        const userName = localStorage.getItem('asg_local');
         const noTournamentText = document.getElementById('noTournament');
 
         if (tournaments.length === 0) {
@@ -166,7 +166,7 @@
     }
 
     async function submitJoin() {
-        const userName = localStorage.getItem('tour_local');
+        const userName = localStorage.getItem('asg_local');
         if (!userName) {
             alert('Please login first!');
             return;
