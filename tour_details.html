@@ -23,10 +23,14 @@
     #gameName { width: 100%; outline: none; margin: 15px 0px; padding: 10px; border: 1px solid #7c4dff; border-radius: 25px; background: rgba(255, 255, 255, 0.1); color: white; box-sizing: border-box; }
     #joinFormDiv h2 { margin-top: 0; color: #ffd700; }
     .close-button { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; margin: 0; }
-    .btn-group { position: fixed; align-items: center; justify-content: center; bottom: 1%; display: flex; width: 100%; gap: 10px;}
+    .btn-group { position: fixed; align-items: center; justify-content: center; bottom: 0.5%; padding: 10px 0px; background: #0d2537; border-radius: 125px; display: flex; width: 100%; gap: 10px;}
     .join , .parti { width: 45%; padding: 10px; background: #391667; border-radius: 125px; color: #fff; border: none;}
     #participantsListContainer { text-align: center;}
     .joined , .no-slots{ background: hsl(256, 100%, 32%); width: 45%; padding: 10px;  border-radius: 125px; color: #fff; border: none;}
+    .rules { margin: 20px; background: #00376580; padding: 10px; border-radius: 8px; }
+    #participants { display: flex; align-items: center; justify-content: center; }
+    #participants > table { width: 100%; margin: 0px 10px; text-align: center; }
+    .participants-container { padding: 10px 10px 10% 10px; margin: 10px 10px 18% 10px; border-radius: 12px; background: #192f35; }
 </style>
 
 <div class="container">
@@ -48,11 +52,13 @@
             </div><div>
                 <p>Timing: <span id="timing"></span></p>
             </div>
-            <p>Rules: <span id="rules"></span></p>
             </div>
             </div>
             </div>
             </div>
+            <div class="rules">
+                <div class="customer-text"><h3>Rules</h3><hr></div>
+                <span id="rules"></span></div>
             <div class="btn-group">
         <button onclick="openParticipants()" class="parti">View Participants</button>
         <button id="joinButton" onclick="openJoinModal()" class="join">Join</button>
@@ -60,14 +66,14 @@
     </div>
 </div>
 <div id="participantsListContainer" class="participants-container">
-    <h3>Participants</h3>
+    <div class="customer-text"><h3>Participants</h3><hr></div>
     <ul id="participants"></ul>
 </div>
 
 <div id="joinModal" class="join-modal">
     <h3>Join Tournament</h3>
     <input type="text" id="gameName" placeholder="Enter your game name">
-    <button onclick="submitJoin()" class="submit-btn">Submit</button>
+    <button onclick="submitJoin()" class="submit-btn">Join</button>
     <button onclick="closeModal()" class="close-button">x</button>
 </div>
 
@@ -76,11 +82,12 @@
 <script>
     let tournamentData = null;
     let userName = localStorage.getItem('asg_local');
+
     window.onload = async () => {
         const selectedTitle = localStorage.getItem('selectedTournamentTitle');
         const selectedMode = localStorage.getItem('selectedTournamentMode');
 
-        const response = await fetch('https://script.google.com/macros/s/AKfycbwSA3sHFTPOttYDms6zaRd40E5DADYQ5ZpABD6tfRR-uJ_KvB5nVA0W2cPUHQQDLnyrTw/exec');
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxIp8bELA23dIGPuUENgXVfidvEEm11ToMlmiqnW9mrknrfxNCuME4-OmBbjuS5SnXcqA/exec');
         const tournaments = await response.json();
 
         tournamentData = tournaments.find(tournament => tournament.title === selectedTitle && tournament.mode === selectedMode);
@@ -93,19 +100,67 @@
             document.getElementById('slots').innerText = tournamentData.slot;
             document.getElementById('mode').innerText = tournamentData.mode;
             document.getElementById('map').innerText = tournamentData.map;
-            document.getElementById('timing').innerText = tournamentData.timing;
+
+            const date = new Date(tournamentData.timing);
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = months[date.getMonth()];
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const formattedTime = `${day} ${month} ${hours}:${minutes}`;
+
+            document.getElementById('timing').innerText = formattedTime;
             document.getElementById('rules').innerText = tournamentData.rules || "No rules specified.";
 
             updateParticipants();
             updateJoinButton();
         }
     };
-    
+
     function updateParticipants() {
-        const participantsList = document.getElementById('participants');
-        participantsList.innerHTML = tournamentData.usernames.length 
-            ? tournamentData.usernames.map((username, index) => `<li>${username} (${tournamentData.gameNames[index] || 'Unknown'})</li>`).join('')
-            : "<li>No participants yet</li>";
+        const participantsContainer = document.getElementById('participantsListContainer');
+        participantsContainer.innerHTML = '';
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'customer-text';
+        headerDiv.innerHTML = '<h3>Participants</h3><hr>';
+        participantsContainer.appendChild(headerDiv);
+
+        if (tournamentData.usernames.length > 0) {
+            let table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.border = '1';
+
+            let thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th style="padding: 10px;">S No.</th>
+                    <th style="padding: 10px;">Username</th>
+                    <th style="padding: 10px;">Game Name</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            let tbody = document.createElement('tbody');
+            tournamentData.usernames.forEach((username, index) => {
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding: 10px; text-align: center;">${index + 1}</td>
+                    <td style="padding: 10px; text-align: center;">${username}</td>
+                    <td style="padding: 10px; text-align: center;">${tournamentData.gameNames[index] || 'Unknown'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            participantsContainer.appendChild(table);
+        } else {
+            const noParticipantsMessage = document.createElement('p');
+            noParticipantsMessage.style.textAlign = 'center';
+            noParticipantsMessage.innerText = 'No participants yet';
+            participantsContainer.appendChild(noParticipantsMessage);
+        }
     }
 
     function updateJoinButton() {
@@ -123,11 +178,13 @@
     }
 
     function openParticipants() {
-        document.getElementById('participantsListContainer').style.display = 'block';
-    }
-
-    function closeParticipants() {
-        document.getElementById('participantsListContainer').style.display = 'none';
+        const participantsContainer = document.getElementById('participantsListContainer');
+        if (participantsContainer.style.display === 'block') {
+            participantsContainer.style.display = 'none';
+        } else {
+            updateParticipants();
+            participantsContainer.style.display = 'block';
+        }
     }
 
     function openJoinModal() {
@@ -153,8 +210,12 @@
             return;
         }
 
+        const joinButton = document.getElementById('joinButton');
+        joinButton.innerText = "Joining...";
+        joinButton.disabled = true;
+
         try {
-            const response = await fetch('https://script.google.com/macros/s/AKfycbwSA3sHFTPOttYDms6zaRd40E5DADYQ5ZpABD6tfRR-uJ_KvB5nVA0W2cPUHQQDLnyrTw/exec', {
+            const response = await fetch('https://script.google.com/macros/s/AKfycbxIp8bELA23dIGPuUENgXVfidvEEm11ToMlmiqnW9mrknrfxNCuME4-OmBbjuS5SnXcqA/exec', {
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'joinTournament',
@@ -166,16 +227,21 @@
             });
 
             const result = await response.json();
+
             if (result.success) {
                 alert('Successfully joined the tournament!');
                 closeModal();
                 window.location.reload();
             } else {
                 alert(result.message || 'Failed to join tournament');
+                joinButton.innerText = "Join Tournament";
+                joinButton.disabled = false;
             }
         } catch (error) {
             console.error('Error joining tournament:', error);
             alert('Failed to join tournament');
+            joinButton.innerText = "Join Tournament";
+            joinButton.disabled = false;
         }
     }
 </script>
